@@ -69,9 +69,6 @@ func makeMysqlDb() (*gorm.DB, error) {
 }
 
 func makeSqlLite() (*gorm.DB, error) {
-	// if cfg.Url ==  {
-	cfg.Url = "reop.db"
-	// }
 	return gorm.Open(sqlite.Open(cfg.Url), &gorm.Config{DisableForeignKeyConstraintWhenMigrating: true, Logger: logger.Default.LogMode(logger.Info)})
 }
 

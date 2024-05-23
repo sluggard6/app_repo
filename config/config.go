@@ -60,7 +60,7 @@ var config Config = Config{
 	},
 	Database: Database{
 		Type:     Sqlite,
-		Url:      "myfile.db",
+		Url:      "reop.db",
 		Username: "",
 		Password: "",
 	},
