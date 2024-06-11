@@ -56,7 +56,7 @@ var config Config = Config{
 	Server: Server{
 		Host:        "0.0.0.0",
 		Port:        5678,
-		ContextPath: "",
+		ContextPath: "apprepo",
 	},
 	Database: Database{
 		Type:     Sqlite,

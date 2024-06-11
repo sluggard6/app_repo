@@ -79,6 +79,8 @@ func initTable() error {
 	// db.AutoMigrate(&Folder{})
 	// db.AutoMigrate(&ShareLibrary{})
 	db.AutoMigrate(&File{})
-	db.AutoMigrate(&Policy{})
+	db.AutoMigrate(&App{})
+	db.AutoMigrate(&AppVersion{})
+	// db.AutoMigrate(&Policy{})
 	return nil
 }

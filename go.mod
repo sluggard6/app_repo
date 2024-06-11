@@ -1,6 +1,6 @@
 module github.com/shfd/repo
 
-go 1.22.2
+go 1.21
 
 require (
 	github.com/go-playground/validator/v10 v10.19.0

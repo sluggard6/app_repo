@@ -11,6 +11,7 @@ import (
 type FileService interface {
 	SaveFile(reader io.Reader, name string) (*model.File, error)
 	GetAbsPath(file *model.File) string
+	GetExportPath() string
 }
 
 type myFileSer struct {
@@ -28,8 +29,12 @@ func NewFileService(store store.Store) FileService {
 	// return (*FileService)(unsafe.Pointer(myFileService))
 }
 
-func (s *myFileSer) checkPolicy() {
+func GetFileService() FileService {
+	return myFileService
+}
 
+func (s *myFileSer) GetExportPath() string {
+	return s.store.GetExportPath()
 }
 
 func (s *myFileSer) SaveFile(reader io.Reader, name string) (*model.File, error) {
@@ -40,15 +45,15 @@ func (s *myFileSer) SaveFile(reader io.Reader, name string) (*model.File, error)
 	if err != nil {
 		return nil, err
 	}
-	policy := &model.Policy{Type: model.MyFile, Path: storeFile.Path, Sha: storeFile.Sha}
-	if err := policy.CheckOrCreat(); err != nil {
+
+	file := &model.File{Name: name, Ext: filepath.Ext(name), Path: storeFile.Path, Sha: storeFile.Sha, Size: uint64(storeFile.Size)}
+	if err := file.CheckOrCreat(); err != nil {
 		return nil, err
 	}
-	file := &model.File{Name: name, Ext: filepath.Ext(name), PolicyID: policy.ID, Size: uint64(storeFile.Size)}
-	_, err = model.Create(file)
+	// _, err = model.Create(file)
 	return file, err
 }
 
 func (s *myFileSer) GetAbsPath(file *model.File) string {
-	return s.store.GetAbsPath(file.Policy.Path)
+	return s.store.GetAbsPath(file.Path)
 }

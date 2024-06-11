@@ -69,6 +69,25 @@ func (fs *FileStore) newTmpFile() (filePath string) {
 	return
 }
 
+func (fs *FileStore) GetExportPath() string {
+	path := fs.Root + string(filepath.Separator) + ".export"
+	if s, err := os.Stat(path); err == nil {
+		if s.IsDir() {
+			return path
+		}
+	}
+	if err := os.MkdirAll(path, os.ModePerm); err != nil {
+		return ""
+	}
+	return path
+
+	// if file, err := os.Open(path); err == nil {
+	// 	file.
+	// 	os.MkdirAll(path, 0755)
+	// }
+	// return
+}
+
 func makeFilePath(sha string) (path []string) {
 	var i, folderLength, folderLevel = 0, 10, 4
 	path = make([]string, folderLevel+1)

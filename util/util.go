@@ -7,10 +7,12 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 	"unsafe"
 
 	"github.com/google/uuid"
+	"github.com/sirupsen/logrus"
 )
 
 func ShaString(s string) string {
@@ -65,9 +67,32 @@ func ByteArrayToString(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
 }
 
-func isBlankString(s string) bool {
+func IsBlankString(s string) bool {
 	return strings.Trim(s, " ") == ""
 }
 func Md5String(s string) string {
 	return fmt.Sprintf("%x", md5.Sum([]byte(s)))
 }
+
+func CopyFile(src, dst string) error {
+	in, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer in.Close()
+	dir, _ := filepath.Split(dst)
+	os.MkdirAll(dir, 0755)
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+	l, err := io.Copy(out, in)
+	if err != nil {
+		return err
+	}
+	logrus.Infoln("copy file length:", l)
+	return nil
+}
+
+// input, err := io.Copy(os.Open(src))

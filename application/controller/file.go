@@ -1,6 +1,8 @@
 package controller
 
 import (
+	"strconv"
+
 	"github.com/kataras/iris/v12"
 	"github.com/kataras/iris/v12/mvc"
 	"github.com/shfd/repo/model"
@@ -21,22 +23,22 @@ func NewFileController(store store.Store) *FileController {
 
 // BeforeActivation 控制器配置
 func (c *FileController) BeforeActivation(b mvc.BeforeActivation) {
-	b.Handle("GET", "/{id:uint}/{name:string}", "LoadFile")
+	b.Handle("GET", "/{id:uint}", "LoadFile")
 }
 
 // LoadFile 加载文件
-func (c *FileController) LoadFile(ctx iris.Context, id uint, name string) *HttpResult {
+func (c *FileController) LoadFile(ctx iris.Context, id uint) *HttpResult {
 	file := &model.File{}
 	_, err := service.GetByID(file, id)
 	if err != nil {
 		return nil
 	}
-	policy := &model.Policy{}
-	_, err = service.GetByID(policy, file.PolicyID)
-	if err != nil {
-		return nil
-	}
-	file.Policy = policy
+	// policy := &model.Policy{}
+	// _, err = service.GetByID(policy, file.PolicyID)
+	// if err != nil {
+	// 	return nil
+	// }
+	// file.Policy = policy
 	// folder := &model.Folder{}
 	// _, err = service.GetByID(folder, file.FolderID)
 	// if err != nil {
@@ -47,11 +49,11 @@ func (c *FileController) LoadFile(ctx iris.Context, id uint, name string) *HttpR
 	// if hasRole, _, _ := user.(*model.User).HasLibrary(folder.LibraryID); !hasRole {
 	// 	return FailedForbidden(ctx)
 	// }
-	_, err = service.GetByID(file.Policy, file.PolicyID)
+	// _, err = service.GetByID(file.Policy, file.PolicyID)
 	// src, err := os.Open(file.Policy.Path)
-	if err != nil {
-		return nil
-	}
+	// if err != nil {
+	// 	return nil
+	// }
 	// defer src.Close()
 	// io.Copy(ctx.ResponseWriter(), src)
 	abspath := c.fileService.GetAbsPath(file)
@@ -62,15 +64,23 @@ func (c *FileController) LoadFile(ctx iris.Context, id uint, name string) *HttpR
 
 // PostUpload 上传文件
 func (c *FileController) PostUpload(ctx iris.Context) *HttpResult {
+	appIdString := ctx.FormValue("app_id")
+	appId, err := strconv.ParseUint(appIdString, 10, 32)
+	if err != nil {
+		// logrus.Errorln(ctx.Params().Len())
+		// logrus.Errorln(appIdString)
+		return FailedCode(PARAM_ERROR)
+	}
+	version := ctx.FormValue("version")
 	file, fileHeader, err := ctx.FormFile("file")
 	if err != nil {
 		return FailedMessage(err.Error())
 	}
 	// folder := &model.Folder{}
 	// folderID, err := strconv.Atoi(ctx.FormValue("folderId"))
-	if err != nil {
-		return FailedCode(PARAM_ERROR)
-	}
+	// if err != nil {
+	// 	return FailedCode(PARAM_ERROR)
+	// }
 	logrus.Debugln(file)
 	logrus.Debugln(fileHeader)
 	// logrus.Debugln(folderID)
@@ -84,6 +94,8 @@ func (c *FileController) PostUpload(ctx iris.Context) *HttpResult {
 	if err != nil {
 		return FailedMessage(err.Error())
 	}
+	appVersion := &model.AppVersion{AppId: uint(appId), Version: version, FileId: dbFile.ID}
+	model.Create(appVersion)
 	return Success(dbFile)
 }
 

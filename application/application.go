@@ -158,7 +158,7 @@ func (s *HttpServer) RouteInit() {
 	app.Options("/*", controller.Cors)
 	// app.Party("/*", controller.Cors).AllowMethods(iris.MethodOptions)
 	app.UseGlobal(controller.Cors)
-	app.Use(AuthRequired, sess.Handler())
+	// app.Use(AuthRequired, sess.Handler())
 	// app.Use(sess.Handler())
 	// mvc.New(app.Party(s.Config.Server.ContextPath + "/test")).Handle(new(controller.TestController))
 	mvc.New(app.Party(s.Config.Server.ContextPath + "/user")).Handle(controller.NewUserController())
@@ -166,6 +166,7 @@ func (s *HttpServer) RouteInit() {
 	// mvc.New(app.Party(s.Config.Server.ContextPath + "/library")).Handle(controller.NewLibraryController())
 	// mvc.New(app.Party(s.Config.Server.ContextPath + "/folder")).Handle(controller.NewFolderController())
 	mvc.New(app.Party(s.Config.Server.ContextPath + "/file")).Handle(controller.NewFileController(s.Store))
+	mvc.New(app.Party(s.Config.Server.ContextPath + "/repo")).Handle(controller.NewRepoController())
 	for _, route := range app.APIBuilder.GetRoutes() {
 		log.Info(route)
 	}
