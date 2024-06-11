@@ -1,7 +1,6 @@
 package util
 
 import (
-	"bytes"
 	"crypto/md5"
 	"crypto/sha256"
 	"fmt"
@@ -54,14 +53,15 @@ func SaveAndSha(reader io.Reader, dist string) ([]byte, int64, error) {
 }
 
 func UUID() string {
-	var buffer bytes.Buffer
-	for _, chr := range uuid.New().String() {
-		if "-" == string(chr) {
-			continue
-		}
-		buffer.WriteString(string(chr))
-	}
-	return buffer.String()
+	// var buffer bytes.Buffer
+	return strings.ReplaceAll(uuid.New().String(), "-", "")
+	// for _, chr := range uuid.New().String() {
+	// 	if "-" == string(chr) {
+	// 		continue
+	// 	}
+	// 	buffer.WriteString(string(chr))
+	// }
+	// return buffer.String()
 }
 func ByteArrayToString(b []byte) string {
 	return *(*string)(unsafe.Pointer(&b))
