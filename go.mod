@@ -6,7 +6,7 @@ require (
 	github.com/go-playground/validator/v10 v10.19.0
 	github.com/google/uuid v1.6.0
 	github.com/iris-contrib/swagger v0.0.0-20230820002204-56b041d3471a
-	github.com/iris-contrib/swagger/v12 v12.2.0-alpha
+	github.com/iris-contrib/swagger/v12 v12.0.1
 	github.com/kataras/iris/v12 v12.2.10
 	github.com/sirupsen/logrus v1.9.3
 	github.com/swaggo/swag v1.16.3
